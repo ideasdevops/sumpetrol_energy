@@ -29,7 +29,6 @@ RUN apk add --no-cache \
     php-xml \
     php-dom \
     php-fileinfo \
-    php-filter \
     php-iconv \
     php-intl \
     php-openssl \
