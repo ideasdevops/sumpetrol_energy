@@ -106,7 +106,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-md);
     gap: var(--spacing-md);
     flex-wrap: nowrap;
 }
@@ -119,10 +119,9 @@ body {
 }
 
 .logo-img {
-    height: 48px;
+    height: 140px;
     width: auto;
     object-fit: contain;
-    margin-right: var(--spacing-xs);
     flex-shrink: 0;
     display: block;
 }
@@ -1188,16 +1187,19 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    opacity: 0.05;
+    opacity: 0;
     background-image: 
         repeating-linear-gradient(45deg, transparent, transparent 10px, var(--primary-dark) 10px, var(--primary-dark) 20px);
     z-index: 2;
     pointer-events: none;
+    display: none;
 }
 
 .pattern-energy {
     background-image: 
         repeating-linear-gradient(45deg, transparent, transparent 10px, var(--brand-burgundy) 10px, var(--brand-burgundy) 20px);
+    opacity: 0;
+    display: none;
 }
 
 .mineria-section .container,
@@ -1225,12 +1227,13 @@ body {
     background-image: 
         repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.03) 15px, rgba(255, 255, 255, 0.03) 30px),
         repeating-linear-gradient(-45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.02) 15px, rgba(255, 255, 255, 0.02) 30px);
-    opacity: 0.4;
+    opacity: 0;
     position: absolute;
     width: 100%;
     height: 100%;
     z-index: 2;
     pointer-events: none;
+    display: none;
 }
 
 .obras-overlay {
@@ -2265,6 +2268,10 @@ body {
         transform: rotate(-45deg) translate(7px, -7px);
     }
     
+    .logo-img {
+        height: 80px;
+    }
+    
     .hero-stats {
         gap: var(--spacing-md);
     }
@@ -2318,6 +2325,10 @@ body {
 @media (max-width: 576px) {
     .container {
         padding: 0 var(--spacing-sm);
+    }
+    
+    .logo-img {
+        height: 60px;
     }
     
     .hero {
