@@ -66,24 +66,20 @@ RUN mkdir -p \
 # ===============================================
 # CONFIGURACIÓN DE PHP-FPM
 # ===============================================
-RUN sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm\/php-fpm.sock/' /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-    sed -i 's/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm\/php-fpm.sock/' /etc/php/php-fpm.d/www.conf && \
-    (sed -i 's/;listen.owner = nobody/listen.owner = nginx/' /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-     sed -i 's/;listen.owner = nobody/listen.owner = nginx/' /etc/php/php-fpm.d/www.conf) && \
-    (sed -i 's/;listen.group = nobody/listen.group = nginx/' /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-     sed -i 's/;listen.group = nobody/listen.group = nginx/' /etc/php/php-fpm.d/www.conf) && \
-    (sed -i 's/user = nobody/user = nginx/' /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-     sed -i 's/user = nobody/user = nginx/' /etc/php/php-fpm.d/www.conf) && \
-    (sed -i 's/group = nobody/group = nginx/' /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-     sed -i 's/group = nobody/group = nginx/' /etc/php/php-fpm.d/www.conf) && \
-    (sed -i 's/;clear_env = no/clear_env = no/' /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-     sed -i 's/;clear_env = no/clear_env = no/' /etc/php/php-fpm.d/www.conf) && \
-    (echo 'php_admin_flag[log_errors] = on' >> /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-     echo 'php_admin_flag[log_errors] = on' >> /etc/php/php-fpm.d/www.conf) && \
-    (echo 'php_admin_value[error_log] = /data/logs/php-fpm/error.log' >> /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-     echo 'php_admin_value[error_log] = /data/logs/php-fpm/error.log' >> /etc/php/php-fpm.d/www.conf) && \
-    (echo 'php_admin_flag[display_errors] = off' >> /etc/php81/php-fpm.d/www.conf 2>/dev/null || \
-     echo 'php_admin_flag[display_errors] = off' >> /etc/php/php-fpm.d/www.conf)
+# Buscar la ruta correcta del archivo de configuración PHP-FPM
+RUN PHP_FPM_CONF=$(find /etc -name "www.conf" -path "*/php-fpm.d/*" 2>/dev/null | head -1) && \
+    if [ -z "$PHP_FPM_CONF" ]; then \
+        PHP_FPM_CONF="/etc/php83/php-fpm.d/www.conf"; \
+    fi && \
+    sed -i "s|listen = 127.0.0.1:9000|listen = /var/run/php-fpm/php-fpm.sock|" "$PHP_FPM_CONF" && \
+    sed -i "s|;listen.owner = nobody|listen.owner = nginx|" "$PHP_FPM_CONF" && \
+    sed -i "s|;listen.group = nobody|listen.group = nginx|" "$PHP_FPM_CONF" && \
+    sed -i "s|user = nobody|user = nginx|" "$PHP_FPM_CONF" && \
+    sed -i "s|group = nobody|group = nginx|" "$PHP_FPM_CONF" && \
+    sed -i "s|;clear_env = no|clear_env = no|" "$PHP_FPM_CONF" && \
+    echo 'php_admin_flag[log_errors] = on' >> "$PHP_FPM_CONF" && \
+    echo 'php_admin_value[error_log] = /data/logs/php-fpm/error.log' >> "$PHP_FPM_CONF" && \
+    echo 'php_admin_flag[display_errors] = off' >> "$PHP_FPM_CONF"
 
 # ===============================================
 # CONFIGURACIÓN DE NGINX
@@ -166,11 +162,11 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'nginx -t' >> /start.sh && \
     echo '' >> /start.sh && \
     echo '# Verificar configuración de PHP-FPM' >> /start.sh && \
-    echo 'php-fpm8 -t 2>/dev/null || php-fpm81 -t 2>/dev/null || php-fpm -t' >> /start.sh && \
+    echo 'php-fpm83 -t 2>/dev/null || php-fpm8 -t 2>/dev/null || php-fpm81 -t 2>/dev/null || php-fpm -t' >> /start.sh && \
     echo '' >> /start.sh && \
     echo '# Iniciar PHP-FPM' >> /start.sh && \
     echo 'echo "🔧 Iniciando PHP-FPM..."' >> /start.sh && \
-    echo 'php-fpm8 -D 2>/dev/null || php-fpm81 -D 2>/dev/null || php-fpm -D' >> /start.sh && \
+    echo 'php-fpm83 -D 2>/dev/null || php-fpm8 -D 2>/dev/null || php-fpm81 -D 2>/dev/null || php-fpm -D' >> /start.sh && \
     echo '' >> /start.sh && \
     echo '# Iniciar nginx' >> /start.sh && \
     echo 'echo "🌐 Iniciando nginx..."' >> /start.sh && \
@@ -188,7 +184,7 @@ RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf && \
     echo 'pidfile=/var/run/supervisord.pid' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo '' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo '[program:php-fpm]' >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo 'command=php-fpm8 -F 2>/dev/null || php-fpm81 -F 2>/dev/null || php-fpm -F' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'command=php-fpm83 -F 2>/dev/null || php-fpm8 -F 2>/dev/null || php-fpm81 -F 2>/dev/null || php-fpm -F' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'stderr_logfile=/data/logs/php-fpm/error.log' >> /etc/supervisor/conf.d/supervisord.conf && \
