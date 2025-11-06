@@ -143,6 +143,7 @@ body {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
+    flex-wrap: wrap;
 }
 
 .nav-link {
