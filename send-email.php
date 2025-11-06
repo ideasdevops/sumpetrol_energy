@@ -1,8 +1,27 @@
 <?php
-header('Content-Type: application/json');
+// Configurar manejo de errores
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Headers CORS y JSON
+header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+
+// Manejar preflight OPTIONS
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// Solo permitir POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+    exit;
+}
 
 // Configuración SMTP basada en las credenciales proporcionadas
 $smtp_host = 'c2630942.ferozo.com';
@@ -19,8 +38,9 @@ $ventas_email = 'ventas@sumpetrol.com.ar';
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-if (!$data) {
-    echo json_encode(['success' => false, 'message' => 'Datos inválidos']);
+if (!$data || json_last_error() !== JSON_ERROR_NONE) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Datos inválidos o formato JSON incorrecto']);
     exit;
 }
 
@@ -111,16 +131,24 @@ $headers .= "X-Mailer: PHP/" . phpversion();
 $success = false;
 $error_message = '';
 
-// Usar PHPMailer si está disponible (recomendado)
-if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\Exception;
-    
-    require_once 'vendor/autoload.php';
-    
-    $mail = new PHPMailer(true);
-    
+// Intentar cargar PHPMailer
+$phpmailer_available = false;
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     try {
+        require_once __DIR__ . '/vendor/autoload.php';
+        if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+            $phpmailer_available = true;
+        }
+    } catch (Exception $e) {
+        // PHPMailer no disponible, usar mail() nativo
+    }
+}
+
+// Usar PHPMailer si está disponible (recomendado)
+if ($phpmailer_available) {
+    try {
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+        
         // Configuración del servidor SMTP
         $mail->isSMTP();
         $mail->Host = $smtp_host;
@@ -130,6 +158,8 @@ if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
         $mail->SMTPSecure = $smtp_secure;
         $mail->Port = $smtp_port;
         $mail->CharSet = 'UTF-8';
+        $mail->SMTPDebug = 0; // Desactivar debug en producción
+        $mail->Debugoutput = 'error_log';
         
         // Remitente y destinatarios
         $mail->setFrom($smtp_username, 'Sumpetrol Landing Page');
@@ -141,35 +171,40 @@ if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $email_body;
+        $mail->AltBody = strip_tags($email_body);
         
         $mail->send();
         $success = true;
     } catch (Exception $e) {
-        $error_message = "Error: {$mail->ErrorInfo}";
+        $error_message = 'Error al enviar el email: ' . $mail->ErrorInfo;
+        error_log('PHPMailer Error: ' . $error_message);
     }
 } else {
-    // Usar mail() nativo (menos confiable pero funciona sin dependencias)
-    // Nota: mail() nativo no soporta autenticación SMTP, por lo que puede no funcionar
-    // Se recomienda instalar PHPMailer para producción
-    
+    // Usar mail() nativo como fallback
     $to = $marketing_email . ', ' . $ventas_email;
+    
+    // Intentar enviar
     $success = @mail($to, $subject, $email_body, $headers);
     
     if (!$success) {
-        $error_message = 'Error al enviar el email. Por favor, configure PHPMailer para mejor compatibilidad.';
+        $error_message = 'Error al enviar el email. El servidor puede no estar configurado para enviar emails.';
+        error_log('mail() Error: No se pudo enviar el email');
     }
 }
 
+// Responder siempre en formato JSON
 if ($success) {
+    http_response_code(200);
     echo json_encode([
         'success' => true,
         'message' => 'Mensaje enviado correctamente'
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
 } else {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => $error_message ?: 'Error al enviar el mensaje'
-    ]);
+        'message' => $error_message ?: 'Error al enviar el mensaje. Por favor, intente nuevamente o contáctenos directamente.'
+    ], JSON_UNESCAPED_UNICODE);
 }
 ?>
 

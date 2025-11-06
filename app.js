@@ -308,17 +308,43 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify(formObject)
         })
-        .then(response => response.json())
+        .then(async response => {
+            // Leer la respuesta como texto primero
+            const text = await response.text();
+            
+            // Verificar si la respuesta es JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Respuesta no JSON recibida:', text);
+                throw new Error('El servidor no devolvió una respuesta válida');
+            }
+            
+            // Intentar parsear JSON
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error('Error al parsear JSON:', text);
+                throw new Error('Error al procesar la respuesta del servidor');
+            }
+            
+            if (!response.ok) {
+                // Si hay un error HTTP, usar el mensaje del servidor o uno genérico
+                throw new Error(data.message || 'Error en el servidor');
+            }
+            
+            return data;
+        })
         .then(data => {
             if (data.success) {
                 showNotification('¡Mensaje enviado exitosamente! Nos pondremos en contacto pronto.', 'success');
                 form.reset();
             } else {
-                showNotification('Error al enviar el mensaje. Por favor, intente nuevamente o contáctenos directamente.', 'error');
+                showNotification(data.message || 'Error al enviar el mensaje. Por favor, intente nuevamente o contáctenos directamente.', 'error');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Error al enviar formulario:', error);
             showNotification('Error al enviar el mensaje. Por favor, intente nuevamente o contáctenos directamente.', 'error');
         })
         .finally(() => {
