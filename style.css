@@ -369,6 +369,7 @@ body {
     justify-content: center;
     flex-wrap: wrap;
     animation: fadeInUp 0.8s ease 0.8s both;
+    margin-bottom: var(--spacing-2xl);
 }
 
 .btn {
@@ -424,14 +425,13 @@ body {
 
 .scroll-indicator {
     position: absolute;
-    bottom: var(--spacing-2xl);
+    bottom: var(--spacing-xl);
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
     color: rgba(255, 255, 255, 0.8);
     animation: fadeInUp 1s ease 1s both;
-    padding-top: var(--spacing-lg);
-    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
 }
 
 .mouse {
@@ -958,7 +958,7 @@ body {
 }
 
 .obras-overlay {
-    background: linear-gradient(135deg, rgba(248, 249, 250, 0.7) 0%, rgba(233, 236, 239, 0.5) 100%);
+    background: linear-gradient(135deg, rgba(10, 26, 46, 0.3) 0%, rgba(30, 58, 95, 0.2) 100%);
     position: absolute;
     width: 100%;
     height: 100%;
@@ -995,9 +995,9 @@ body {
    OBRAS SECTION
    ============================================ */
 .obras-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 30%, #dee2e6 60%, #ced4da 100%);
+    background: var(--gradient-hero);
+    background: linear-gradient(135deg, #0a1a2e 0%, #1e3a5f 50%, #2d5a87 100%);
     position: relative;
-    background-attachment: fixed;
 }
 
 .obras-section .section-background {
@@ -1045,7 +1045,7 @@ body {
 .obra-category-card h3 {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary-dark);
+    color: var(--white);
     margin-bottom: var(--spacing-xs);
 }
 
@@ -1059,7 +1059,7 @@ body {
 }
 
 .obra-category-card p {
-    color: var(--text-light);
+    color: rgba(255, 255, 255, 0.9);
     line-height: 1.7;
     margin-bottom: var(--spacing-md);
 }
