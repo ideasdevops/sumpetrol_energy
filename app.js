@@ -631,3 +631,224 @@ function scrollToTop() {
         behavior: 'smooth'
     });
 }
+
+    // ============================================
+    // MODAL DE SERVICIOS
+    // ============================================
+    const serviceModal = document.getElementById('serviceModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalDescription = document.getElementById('modalDescription');
+    const modalFeatures = document.getElementById('modalFeatures');
+    const modalExtended = document.getElementById('modalExtended');
+    
+    // Información ampliada de cada servicio
+    const servicesData = {
+        'perforacion': {
+            title: 'Perforación y Explotación',
+            icon: 'fas fa-hammer',
+            description: 'Técnicas avanzadas de perforación adaptadas a cada tipo de yacimiento mineral, optimizando la extracción y minimizando el impacto ambiental.',
+            features: [
+                'Perforación de precisión',
+                'Análisis geológico avanzado',
+                'Optimización de procesos',
+                'Tecnología de última generación',
+                'Monitoreo en tiempo real',
+                'Minimización de impacto ambiental'
+            ],
+            extended: {
+                title: 'Nuestro Enfoque en Perforación',
+                content: 'Utilizamos equipos de perforación de última generación y técnicas avanzadas que nos permiten adaptarnos a diferentes tipos de yacimientos. Nuestro equipo de geólogos y especialistas en perforación trabajan en conjunto para optimizar cada proyecto, asegurando la máxima eficiencia y el menor impacto ambiental posible.'
+            }
+        },
+        'gestion-hidrica': {
+            title: 'Gestión de Recursos Hídricos',
+            icon: 'fas fa-tint',
+            description: 'Soluciones integrales para el manejo eficiente del agua en operaciones mineras, desde captación hasta tratamiento y reciclaje.',
+            features: [
+                'Sistemas de tratamiento',
+                'Reciclaje de agua',
+                'Gestión sostenible',
+                'Análisis de calidad',
+                'Optimización de consumo',
+                'Cumplimiento normativo'
+            ],
+            extended: {
+                title: 'Gestión Responsable del Agua',
+                content: 'El agua es un recurso crítico en operaciones mineras. Desarrollamos sistemas integrales que incluyen captación, tratamiento, reciclaje y gestión responsable del recurso hídrico, cumpliendo con los más altos estándares ambientales y normativos.'
+            }
+        },
+        'logistica': {
+            title: 'Logística Especializada',
+            icon: 'fas fa-truck',
+            description: 'Cadena de suministro optimizada para equipos y materiales mineros, garantizando disponibilidad y eficiencia operativa.',
+            features: [
+                'Transporte especializado',
+                'Almacenamiento estratégico',
+                'Gestión de inventarios',
+                'Coordinación de entregas',
+                'Optimización de rutas',
+                'Trazabilidad completa'
+            ],
+            extended: {
+                title: 'Logística de Clase Mundial',
+                content: 'Nuestra red logística está diseñada para garantizar la disponibilidad continua de equipos y materiales críticos. Trabajamos con proveedores estratégicos y gestionamos inventarios inteligentes que minimizan costos y maximizan la eficiencia operativa.'
+            }
+        },
+        'mantenimiento': {
+            title: 'Mantenimiento de Equipos',
+            icon: 'fas fa-cogs',
+            description: 'Programas de mantenimiento preventivo y correctivo para maximizar la productividad y vida útil de la maquinaria minera.',
+            features: [
+                'Mantenimiento predictivo',
+                'Reparación especializada',
+                'Optimización de costos',
+                'Diagnóstico avanzado',
+                'Repuestos garantizados',
+                'Técnicos certificados'
+            ],
+            extended: {
+                title: 'Mantenimiento Proactivo',
+                content: 'Implementamos programas de mantenimiento basados en datos y análisis predictivo, permitiendo identificar y resolver problemas antes de que afecten la producción. Nuestro equipo de técnicos especializados garantiza el máximo tiempo de operación de los equipos.'
+            }
+        },
+        'energia-solar': {
+            title: 'Energía Solar',
+            icon: 'fas fa-sun',
+            description: 'Desarrollo e implementación de proyectos solares a escala industrial, desde diseño hasta operación y mantenimiento.',
+            features: [
+                'Parques solares',
+                'Sistemas fotovoltaicos',
+                'Integración energética',
+                'Cubiertas solares',
+                'Sistemas de almacenamiento',
+                'Monitoreo y mantenimiento'
+            ],
+            extended: {
+                title: 'Energía Solar para el Futuro',
+                content: 'Desarrollamos proyectos solares completos que incluyen estudios de viabilidad, diseño personalizado, instalación de paneles de última generación, sistemas de almacenamiento y programas de mantenimiento. Nuestras soluciones se adaptan a empresas, bodegas, escuelas y proyectos industriales, generando energía limpia y reduciendo costos operativos significativamente.'
+            }
+        },
+        'energia-eolica': {
+            title: 'Energía Eólica',
+            icon: 'fas fa-wind',
+            description: 'Soluciones eólicas adaptadas a las necesidades energéticas de cada cliente, optimizando la generación y distribución.',
+            features: [
+                'Parques eólicos',
+                'Análisis de viento',
+                'Sistemas híbridos',
+                'Aerogeneradores de última generación',
+                'Estudios de viabilidad',
+                'Integración a red'
+            ],
+            extended: {
+                title: 'Viento como Fuente de Energía',
+                content: 'Realizamos estudios detallados de recursos eólicos y diseñamos parques eólicos optimizados para cada ubicación. Nuestros proyectos incluyen la selección de aerogeneradores de última generación, sistemas de control inteligente y programas de mantenimiento preventivo para maximizar la generación energética.'
+            }
+        },
+        'sistemas-hibridos': {
+            title: 'Sistemas Híbridos',
+            icon: 'fas fa-battery-full',
+            description: 'Combinación optimizada de fuentes renovables para operaciones remotas, garantizando suministro continuo y eficiente.',
+            features: [
+                'Almacenamiento energético',
+                'Micro-redes',
+                'Gestión inteligente',
+                'Sistemas solares + eólicos',
+                'Baterías de litio',
+                'Control automatizado'
+            ],
+            extended: {
+                title: 'Sistemas Híbridos Inteligentes',
+                content: 'Combinamos múltiples fuentes de energía renovable (solar, eólica, baterías) en sistemas híbridos inteligentes que garantizan suministro continuo las 24 horas. Nuestros sistemas de gestión energética optimizan automáticamente el uso de cada fuente según disponibilidad y demanda, ideal para operaciones remotas o instalaciones que requieren alta confiabilidad.'
+            }
+        },
+        'eficiencia-energetica': {
+            title: 'Eficiencia Energética',
+            icon: 'fas fa-chart-line',
+            description: 'Auditorías y mejoras para optimizar el consumo energético industrial, reduciendo costos y huella de carbono.',
+            features: [
+                'Auditorías energéticas',
+                'Optimización de procesos',
+                'Reducción de emisiones',
+                'Iluminación LED',
+                'Automatización energética',
+                'Análisis de consumo'
+            ],
+            extended: {
+                title: 'Optimización Energética Integral',
+                content: 'Realizamos auditorías energéticas completas que identifican oportunidades de ahorro. Implementamos soluciones como iluminación LED de alta eficiencia, sistemas de automatización, optimización de procesos industriales y gestión inteligente de la energía, resultando en reducciones significativas de costos y emisiones de carbono.'
+            }
+        }
+    };
+    
+    // Manejar clics en tarjetas de servicio
+    const serviceCards = document.querySelectorAll('.service-card[data-service]');
+    
+    serviceCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const serviceId = this.getAttribute('data-service');
+            const serviceData = servicesData[serviceId];
+            
+            if (serviceData) {
+                openModal(serviceData);
+            }
+        });
+    });
+    
+    // Función para abrir el modal
+    function openModal(data) {
+        modalTitle.textContent = data.title;
+        modalIcon.innerHTML = `<i class="${data.icon}"></i>`;
+        modalDescription.textContent = data.description;
+        
+        // Limpiar y llenar características
+        modalFeatures.innerHTML = '';
+        data.features.forEach(feature => {
+            const li = document.createElement('li');
+            li.innerHTML = `<i class="fas fa-check"></i> ${feature}`;
+            modalFeatures.appendChild(li);
+        });
+        
+        // Información ampliada
+        modalExtended.innerHTML = '';
+        if (data.extended) {
+            const extendedDiv = document.createElement('div');
+            extendedDiv.innerHTML = `
+                <h4>${data.extended.title}</h4>
+                <p>${data.extended.content}</p>
+            `;
+            modalExtended.appendChild(extendedDiv);
+        }
+        
+        // Mostrar modal
+        serviceModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Cerrar modal
+    function closeModal() {
+        serviceModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Event listeners para cerrar modal
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+    
+    if (serviceModal) {
+        const modalOverlay = serviceModal.querySelector('.modal-overlay');
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', closeModal);
+        }
+        
+        // Cerrar con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && serviceModal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    }
+}
