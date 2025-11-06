@@ -1172,7 +1172,6 @@ body {
     z-index: 0;
     filter: grayscale(30%);
     pointer-events: none;
-    z-index: 0;
 }
 
 .section-overlay {
