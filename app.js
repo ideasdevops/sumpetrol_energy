@@ -618,21 +618,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // CONSOLE LOG (Solo para desarrollo)
     // ============================================
-    console.log('%c🚀 Sumpetrol Landing Page', 'color: #f4a261; font-size: 20px; font-weight: bold;');
-    console.log('%cDesarrollado con pasión para la industria energética y minera', 'color: #1e3a5f; font-size: 12px;');
-});
-
-// ============================================
-// UTILITY: Scroll to Top (si se necesita)
-// ============================================
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
-
-    // ============================================
     // MODAL DE SERVICIOS
     // ============================================
     const serviceModal = document.getElementById('serviceModal');
@@ -851,4 +836,18 @@ function scrollToTop() {
             }
         });
     }
+
+    // ============================================
+    console.log('%c🚀 Sumpetrol Landing Page', 'color: #f4a261; font-size: 20px; font-weight: bold;');
+    console.log('%cDesarrollado con pasión para la industria energética y minera', 'color: #1e3a5f; font-size: 12px;');
+});
+
+// ============================================
+// UTILITY: Scroll to Top (si se necesita)
+// ============================================
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }
